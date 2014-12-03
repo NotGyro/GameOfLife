@@ -1,0 +1,5 @@
+#Vim temporary files.
+*~
+
+#C Stuff
+*.o
