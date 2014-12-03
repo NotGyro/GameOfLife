@@ -3,3 +3,6 @@
 
 #C Stuff
 *.o
+
+#The executable
+lifegame
