@@ -14,8 +14,6 @@ typedef enum {
 
 struct World
 {
-	bool redBuffer*;
-	bool blueBuffer*;
 
 	int height;
 	int width;
@@ -56,7 +54,11 @@ void FlipCell(World *const, int, int);
 
 void InitializeWorld(World *const, unsigned int, unsigned int);
 
+/* For rendering and other such output functions.
+ * Wraps/hides buffering and such. */
+bool GetCell(World *const, int, int);
+
 //Basically a convenience function over InitializeWorld.
-void MakeWorld(unsigned int, unsigned int);
+World* MakeWorld(unsigned int, unsigned int);
 
 #endif
