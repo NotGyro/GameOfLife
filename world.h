@@ -43,15 +43,20 @@ struct World
 	bool blueBuffer*;
 };
 
-void Update(World*);
+void Update(World *const);
 
 /* 
  * First int pair is new size, second is
  * offset by which we blit the old map
  * onto the new one.
  */
-void Resize(World*, unsigned int, unsigned int, int, int);
+void ResizeWorld(World *const, unsigned int, unsigned int, int, int);
 
-void FlipCell(World*, int, int);
+void FlipCell(World *const, int, int);
+
+void InitializeWorld(World *const, unsigned int, unsigned int);
+
+//Basically a convenience function over InitializeWorld.
+void MakeWorld(unsigned int, unsigned int);
 
 #endif
