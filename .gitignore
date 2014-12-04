@@ -1,5 +1,6 @@
 #Vim temporary files.
 *~
+*.swp
 
 #C Stuff
 *.o
