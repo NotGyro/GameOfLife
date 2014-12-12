@@ -15,8 +15,8 @@ typedef enum {
 struct World
 {
 
-	int height;
-	int width;
+	unsigned int height;
+	unsigned int width;
 
 	/* This implementation of Conway's Game of Life
 	 * works by reading one buffer (the previous /
