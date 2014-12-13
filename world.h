@@ -37,8 +37,8 @@ struct World
 	//TODO: More concise explanation. :P
 	bufferid writeBuf;
 
-	bool redBuffer*;
-	bool blueBuffer*;
+	bool* redBuffer;
+	bool* blueBuffer;
 };
 
 void Update(World *const);

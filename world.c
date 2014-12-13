@@ -1,6 +1,25 @@
 #include "world.h"
 #include "null.h"
 
+void SetCell(World *const w, int cellX, int cellY, bool setTo)
+{
+	bool* buf;
+	if(w->writeBuf == RED)
+	{
+		buf = w->redBuffer; 
+	}
+	else if(w->writeBuf == BLUE)
+	{ 
+ 		buf = w->blueBuffer;
+	}
+	if(((cellX > 0) && (cellX < w->width))
+			&& ((cellY > 0) && (cellY < w->height)))
+	{
+		//Packed array element retrieval.
+		buf[(cellY*w->height)+cellX] = setTo;
+	}
+
+}
 void _UpdateCell(World *const w, unsigned int cellX, unsigned int cellY)
 {
 	
@@ -43,12 +62,12 @@ void _UpdateCell(World *const w, unsigned int cellX, unsigned int cellY)
 	if((count < 2) && (ourCell == true))
 	{
 		//Death by underpopulation
-		SetCell(w, cellX, cellY, false)
+		SetCell(w, cellX, cellY, false);
 	}
 	else if((count > 3) && (ourCell == true))
 	{
 		//Death by overcrowding
-		SetCell(w, cellX, cellY, false)
+		SetCell(w, cellX, cellY, false);
 	}
 	//Two neighbors on a live cell does nothing.
 	//Three on an empty cell creates a live cell (reproduction):
@@ -63,7 +82,7 @@ void Update(World *const w)
 	{
 		for(int x = 0; x < w->width; ++x)
 		{
-			UpdateCell(w, x, y);
+			_UpdateCell(w, x, y);
 		}
 	}
 }
@@ -78,25 +97,6 @@ void ResizeWorld(World *const w, unsigned int width, unsigned int height,
 {
 
 }
-void SetCell(World *const w, int cellX, int cellY, bool setTo)
-{
-	bool* buf;
-	if(w->writeBuf == RED)
-	{
-		buf = w->redBuffer; 
-	}
-	else if(w->writeBuf == BLUE)
-	{ 
- 		buf = w->blueBuffer:
-	}
-	if(((cellX > 0) && (cellX < w->width))
-			&& ((cellY > 0) && (cellY < w->height)))
-	{
-		//Packed array element retrieval.
-		buf[(cellY*height)+cellX] = setTo;
-	}
-
-}
 void FlipCell(World *const w, int cellX, int cellY)
 {
 	SetCell(w, cellX, cellY, !(GetCell(w, cellX, cellY)));
@@ -106,7 +106,7 @@ void InitializeWorld(World *const w, unsigned int width, unsigned int height)
 {
 	w->writeBuf = RED;
 	w->redBuffer = malloc(sizeof(bool)*(width*height));
-	w->blueBuffer = calloc(sizeof(bool)*(width*height));
+	w->blueBuffer = calloc(width*height, sizeof(bool));
 	w->width = width;
 	w->height = height;
 }
@@ -120,7 +120,7 @@ World* MakeWorld(unsigned int width, unsigned int height)
 }
 
 //Buffer, width, height, positionx, positiony
-bool GetCellFromBuffer(bool buf*, unsigned int width, unsigned int height,
+bool GetCellFromBuffer(bool* buf, unsigned int width, unsigned int height,
 			int posX, int posY)
 {
 	if(((posX > 0) && (posX < width))

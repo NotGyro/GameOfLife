@@ -1,13 +1,14 @@
+EXTRA_CFLAGS := -std=c99
 all: game 
 
-game: main.o page.o
-		gcc main.o page.o -o lifegame
+game: main.o world.o
+		gcc main.o world.o -o lifegame
 
 main.o: main.c
-		gcc -c main.c
+		gcc -std=c99 -c main.c
 
-page.o: page.c
-		gcc -c page.c
+world.o: world.c
+		gcc -std=c99 -c world.c
 
 clean:
 		rm -rf *o lifegame
