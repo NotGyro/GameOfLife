@@ -61,7 +61,7 @@ void DrawCells(GameRenderer* render, World* w)
 				 	grid->cellSize+(x*grid->cellSize), 
 					grid->cellSize+(y*grid->cellSize)};
 				
-				SDL_RenderDrawRect( render, &rectCell );
+				SDL_RenderFillRect( render, &rectCell );
 			}
 		}
 	}	

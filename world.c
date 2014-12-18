@@ -76,6 +76,23 @@ void _UpdateCell(World *const w, unsigned int cellX, unsigned int cellY)
 		SetCell(w, cellX, cellY, true);
 	}
 };
+
+void FlipBuffers(World *const w)
+{
+	if(w->writeBuf == RED)
+	{
+		w->writeBuf = BLUE;
+		memcpy(w->blueBuffer, w->redBuffer,
+			(w->width * w->height) * sizeof(bool));
+	}	
+	if(w->writeBuf == BLUE)
+	{
+		w->writeBuf = RED;
+		memcpy(w->redBuffer, w->blueBuffer,
+			(w->width * w->height) * sizeof(bool));
+	}	
+}
+
 void Update(World *const w)
 {
 	for(int y = 0; y < w->height; ++y)
@@ -85,6 +102,7 @@ void Update(World *const w)
 			_UpdateCell(w, x, y);
 		}
 	}
+	FlipBuffers(w);	
 }
 
 /* 
