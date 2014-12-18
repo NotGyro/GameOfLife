@@ -33,7 +33,7 @@ void InitGameRenderer(GameRenderer* g, const char* wtitle, unsigned int wwidth, 
 	}
  
 	g->renderer = 0;
-	g->renderer = SDL_CreateRenderer( g->window, -1, SDL_RENDERER_ACCELERATED );
+	g->renderer = SDL_CreateRenderer( g->window, -1, SDL_RENDERER_SOFTWARE );
 	if( g->renderer == NULL )
 	{
 		printf( "Renderer didn't initialize properly, SDL_GetError() says: %s\n", SDL_GetError() );
@@ -43,12 +43,12 @@ void InitGameRenderer(GameRenderer* g, const char* wtitle, unsigned int wwidth, 
 
 }
 
-void DrawCells(GameRenderer* render, World* w)
+void DrawCells(GameRenderer* g, World* w)
 {
-	DrawableGrid* grid = render->gridProps;
+	DrawableGrid* grid = g->gridProps;
 	bool current = false;
 	
-	SDL_SetRenderDrawColor(render, grid->color.r, grid->color.g, grid->color.b, grid->color.a);
+	SDL_SetRenderDrawColor(g->renderer, grid->color.r, grid->color.g, grid->color.b, grid->color.a);
 	for(int x = 0; x < w->width; ++x)
 	{
 		for(int y = 0; y < w->height; ++y)
@@ -61,12 +61,10 @@ void DrawCells(GameRenderer* render, World* w)
 				 	grid->cellSize+(x*grid->cellSize), 
 					grid->cellSize+(y*grid->cellSize)};
 				
-				SDL_RenderFillRect( render, &rectCell );
+				SDL_RenderFillRect(g->renderer, &rectCell );
 			}
 		}
 	}	
-	SDL_Rect testRect ={0, 0, 256, 256};
-	SDL_RenderFillRect( render, &testRect );
 }
 
 void DrawGame(GameRenderer* g, World* world)
