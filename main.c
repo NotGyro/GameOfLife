@@ -10,17 +10,12 @@ int main()
 	InitializeWorld(&ourWorld, 256, 256);
 	printf("Hello World!\n");
 
-	SetCell(&ourWorld, 26, 26, true);
-	SetCell(&ourWorld, 26, 27, true);
-	SetCell(&ourWorld, 26, 28, true);
-	SetCell(&ourWorld, 27, 27, true);
-
 	DrawableGrid bgGrid;
 	bgGrid.color.a = 255;
 	bgGrid.color.r = 120;
 	bgGrid.color.g = 190;
 	bgGrid.color.b = 255;
-	bgGrid.cellSize = 15;
+	bgGrid.cellSize = 16;
 
 	GameRenderer ren;
 	ren.gridProps = &bgGrid;
@@ -31,10 +26,11 @@ int main()
 	unsigned int generation = 0;
 	SDL_Event event;
 	
-	SetCell(&ourWorld, 1, 1, true);
-	SetCell(&ourWorld, 2, 1, true);
-	SetCell(&ourWorld, 3, 1, true);
-	Update(&ourWorld);
+	SetCell(&ourWorld, 3, 2, true);
+	SetCell(&ourWorld, 4, 2, true);
+	SetCell(&ourWorld, 3, 3, true);
+	SetCell(&ourWorld, 4, 3, true);
+	FlipBuffers(&ourWorld);
 	while(!quit)
 	{
 		//World logic

@@ -57,9 +57,8 @@ void DrawCells(GameRenderer* g, World* w)
 			if(current)
 			{
 				SDL_Rect rectCell =
-				 	{x*grid->cellSize, y*grid->cellSize,
-				 	grid->cellSize+(x*grid->cellSize), 
-					grid->cellSize+(y*grid->cellSize)};
+				 	{x*(grid->cellSize), y*(grid->cellSize),
+				 	grid->cellSize, grid->cellSize};
 				
 				SDL_RenderFillRect(g->renderer, &rectCell );
 			}

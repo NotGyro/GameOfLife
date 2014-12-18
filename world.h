@@ -43,6 +43,7 @@ struct World
 
 void Update(World *const);
 
+void FlipBuffers(World *const);
 /* 
  * First int pair is new size, second is
  * offset by which we blit the old map

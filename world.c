@@ -123,7 +123,7 @@ void FlipCell(World *const w, int cellX, int cellY)
 void InitializeWorld(World *const w, unsigned int width, unsigned int height)
 {
 	w->writeBuf = RED;
-	w->redBuffer = malloc(sizeof(bool)*(width*height));
+	w->redBuffer = calloc(width*height, sizeof(bool));
 	w->blueBuffer = calloc(width*height, sizeof(bool));
 	w->width = width;
 	w->height = height;
@@ -141,8 +141,8 @@ World* MakeWorld(unsigned int width, unsigned int height)
 bool GetCellFromBuffer(bool* buf, unsigned int width, unsigned int height,
 			int posX, int posY)
 {
-	if(((posX > 0) && (posX < width))
-			&& ((posY > 0) && (posY < height)))
+	if(((posX >= 0) && (posX < width))
+			&& ((posY >= 0) && (posY < height)))
 	{
 		//Packed array element retrieval.
 		return buf[(posY*height)+posX];
