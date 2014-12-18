@@ -65,6 +65,8 @@ void DrawCells(GameRenderer* render, World* w)
 			}
 		}
 	}	
+	SDL_Rect testRect ={0, 0, 256, 256};
+	SDL_RenderFillRect( render, &testRect );
 }
 
 void DrawGame(GameRenderer* g, World* world)
