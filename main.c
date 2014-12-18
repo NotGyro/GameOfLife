@@ -30,6 +30,11 @@ int main()
 	bool paused = true;
 	unsigned int generation = 0;
 	SDL_Event event;
+	
+	SetCell(&ourWorld, 1, 1, true);
+	SetCell(&ourWorld, 2, 1, true);
+	SetCell(&ourWorld, 3, 1, true);
+	Update(&ourWorld);
 	while(!quit)
 	{
 		//World logic

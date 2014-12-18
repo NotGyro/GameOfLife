@@ -43,9 +43,28 @@ void InitGameRenderer(GameRenderer* g, const char* wtitle, unsigned int wwidth, 
 
 }
 
-void DrawCells(SDL_Renderer* render, World* w)
+void DrawCells(GameRenderer* render, World* w)
 {
-
+	DrawableGrid* grid = render->gridProps;
+	bool current = false;
+	
+	SDL_SetRenderDrawColor(render, grid->color.r, grid->color.g, grid->color.b, grid->color.a);
+	for(int x = 0; x < w->width; ++x)
+	{
+		for(int y = 0; y < w->height; ++y)
+		{
+			current = GetCell(w, x, y);
+			if(current)
+			{
+				SDL_Rect rectCell =
+				 	{x*grid->cellSize, y*grid->cellSize,
+				 	grid->cellSize+(x*grid->cellSize), 
+					grid->cellSize+(y*grid->cellSize)};
+				
+				SDL_RenderDrawRect( render, &rectCell );
+			}
+		}
+	}	
 }
 
 void DrawGame(GameRenderer* g, World* world)
@@ -58,7 +77,7 @@ void DrawGame(GameRenderer* g, World* world)
 	
 	//Draw our grid
 	DrawBackgroundGrid( g->renderer, g->gameWidth, g->gameHeight, g->gridProps );		
-		
+	DrawCells(g, world);		
 	SDL_RenderPresent( g->renderer );
 }
 
