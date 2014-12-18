@@ -29,7 +29,13 @@ int main()
 	SetCell(&ourWorld, 3, 2, true);
 	SetCell(&ourWorld, 4, 2, true);
 	SetCell(&ourWorld, 3, 3, true);
-	SetCell(&ourWorld, 4, 3, true);
+	SetCell(&ourWorld, 3, 4, true);
+	//Glider
+	SetCell(&ourWorld, 9, 4, true);
+	SetCell(&ourWorld, 10, 5, true);
+	SetCell(&ourWorld, 10, 6, true);
+	SetCell(&ourWorld, 9, 6, true);
+	SetCell(&ourWorld, 8, 6, true);
 	FlipBuffers(&ourWorld);
 	while(!quit)
 	{
@@ -57,6 +63,11 @@ int main()
 					
 					case SDLK_SPACE:
 					paused = !paused;
+					break;
+					
+					case SDLK_n:
+					Update(&ourWorld);
+					++generation;
 					break;
 
 					default: 
