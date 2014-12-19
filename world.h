@@ -54,7 +54,7 @@ void ResizeWorld(World *const, unsigned int, unsigned int, int, int);
 void FlipCell(World *const, int, int);
 
 void InitializeWorld(World *const, unsigned int, unsigned int);
-
+void DestroyWorld(World *const);
 /* For rendering and other such output functions.
  * Wraps/hides buffering and such. */
 bool GetCell(World *const, int, int);

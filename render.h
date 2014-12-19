@@ -24,8 +24,8 @@ struct GameRenderer
 	//The window we'll be rendering to 
 	SDL_Window* window; 
 
-	unsigned int gameWidth;
-	unsigned int gameHeight;
+	//unsigned int gameWidth;
+	//unsigned int gameHeight;
 
 	unsigned int windowWidth;
 	unsigned int windowHeight;
@@ -35,6 +35,18 @@ struct GameRenderer
 	SDL_Renderer* renderer;
 
 	DrawableGrid* gridProps;
+
+	//Size and relative position of the game on the screen.	
+	SDL_Rect screenGame;  
+
+	int cameraX;
+	int cameraY;
+
+	SDL_Texture* gameTexture;
+	
+	//Deprecated, will manipulate screenGame instead.
+	unsigned int gameWidth;
+	unsigned int gameHeight
 };
 
 void InitGameRenderer(GameRenderer*, const char*, unsigned int, unsigned int);

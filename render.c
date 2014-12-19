@@ -33,7 +33,7 @@ void InitGameRenderer(GameRenderer* g, const char* wtitle, unsigned int wwidth, 
 	}
  
 	g->renderer = 0;
-	g->renderer = SDL_CreateRenderer( g->window, -1, SDL_RENDERER_SOFTWARE );
+	g->renderer = SDL_CreateRenderer( g->window, -1, SDL_RENDERER_TARGETTEXTURE );
 	if( g->renderer == NULL )
 	{
 		printf( "Renderer didn't initialize properly, SDL_GetError() says: %s\n", SDL_GetError() );
@@ -41,14 +41,49 @@ void InitGameRenderer(GameRenderer* g, const char* wtitle, unsigned int wwidth, 
 		return 1;
 	}
 
+	//We will need a function for updating game area size,
+	//called on world resize, that reallocates this.
+	g->gameTexture = SDL_CreateTexture(g->renderer, SDL_PIXELFORMAT_RGBA8888,
+		SDL_TEXTUREACCESS_TARGET, wwidth, wheight);
 }
 
-void DrawCells(GameRenderer* g, World* w)
+
+void DrawGame(GameRenderer* g, World* world)
 {
-	DrawableGrid* grid = g->gridProps;
+
+	//Prepare to render to texture.
+	SDL_SetRenderTarget(g->renderer, g->gameTexture);
+	
+	//Clear screen
+	SDL_SetRenderDrawColor( g->renderer, 0xFF, 0xFF, 0xFF, 0xFF );
+	SDL_RenderClear( g->renderer );
+	
+	//Draw our grid
+	DrawBackgroundGrid( g->renderer, g->gameWidth, g->gameHeight, g->gridProps );		
+	DrawCells(g->renderer, g->gridProps, world);		
+	SDL_RenderPresent( g->renderer );
+
+	//Now draw the rest of the screen
+	SDL_SetRenderTarget(g->renderer, NULL);
+	SDL_SetRenderDrawColor( g->renderer, 180, 180, 180, 255 );
+	SDL_RenderClear( g->renderer );
+
+	//Dumb rectangle for testing
+	SDL_Rect stretchRect; 
+	stretchRect.x = 0; 
+	stretchRect.y = 0; 
+	stretchRect.w = 256; 
+	stretchRect.h = 256; 
+	SDL_RenderCopy(g->renderer, g->gameTexture, NULL, &stretchRect);
+	SDL_RenderPresent(g->renderer);
+}
+
+void DrawCells(SDL_Renderer* render, DrawableGrid* grid, World* w)
+{
 	bool current = false;
 	
-	SDL_SetRenderDrawColor(g->renderer, grid->color.r, grid->color.g, grid->color.b, grid->color.a);
+	SDL_SetRenderDrawColor(render, 
+		grid->color.r, grid->color.g, grid->color.b, grid->color.a);
 	for(int x = 0; x < w->width; ++x)
 	{
 		for(int y = 0; y < w->height; ++y)
@@ -60,24 +95,10 @@ void DrawCells(GameRenderer* g, World* w)
 				 	{x*(grid->cellSize), y*(grid->cellSize),
 				 	grid->cellSize, grid->cellSize};
 				
-				SDL_RenderFillRect(g->renderer, &rectCell );
+				SDL_RenderFillRect(render, &rectCell );
 			}
 		}
 	}	
-}
-
-void DrawGame(GameRenderer* g, World* world)
-{
-
-	//Rendering
-	//Clear screen
-	SDL_SetRenderDrawColor( g->renderer, 0xFF, 0xFF, 0xFF, 0xFF );
-	SDL_RenderClear( g->renderer );
-	
-	//Draw our grid
-	DrawBackgroundGrid( g->renderer, g->gameWidth, g->gameHeight, g->gridProps );		
-	DrawCells(g, world);		
-	SDL_RenderPresent( g->renderer );
 }
 
 void DrawBackgroundGrid(SDL_Renderer* renderer, unsigned int width, unsigned int height, 
@@ -97,7 +118,7 @@ void DrawBackgroundGrid(SDL_Renderer* renderer, unsigned int width, unsigned int
 }
 void CleanupRendering(GameRenderer* g)
 {
-	
+	SDL_DestroyTexture(g->gameTexture);
 	SDL_DestroyRenderer(g->renderer);
 	SDL_DestroyWindow(g->window);
 	SDL_Quit();

@@ -170,3 +170,9 @@ bool GetCell(World *const w, int x, int y)
 		return -1;
 	}
 }
+
+void DestroyWorld(World *const w)
+{
+	free(w->redBuffer);
+	free(w->blueBuffer);
+}

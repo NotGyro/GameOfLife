@@ -8,10 +8,10 @@ int main()
 {
 	World ourWorld;
 	InitializeWorld(&ourWorld, 256, 256);
-	printf("Hello World!\n");
 
 	DrawableGrid bgGrid;
 	bgGrid.color.a = 255;
+	//Sky blue
 	bgGrid.color.r = 120;
 	bgGrid.color.g = 190;
 	bgGrid.color.b = 255;
@@ -78,6 +78,7 @@ int main()
 		//Rendering happens here:
 		DrawGame(&ren, &ourWorld);		
 	}
+	DestroyWorld(&ourWorld);
 	CleanupRendering(&ren);
 	return 0;
 }
