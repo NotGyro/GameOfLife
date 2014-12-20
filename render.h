@@ -34,24 +34,24 @@ struct GameRenderer
 
 	SDL_Renderer* renderer;
 
-	DrawableGrid* gridProps;
+	DrawableGrid gridProps;
 
 	//Size and relative position of the game on the screen.	
 	SDL_Rect screenGame;  
 
-	int cameraX;
-	int cameraY;
-
 	SDL_Texture* gameTexture;
 	
-	//Deprecated, will manipulate screenGame instead.
-	unsigned int gameWidth;
-	unsigned int gameHeight
 };
 
-void InitGameRenderer(GameRenderer*, const char*, unsigned int, unsigned int);
-void DrawGame(GameRenderer*, World*);
+void InitGameRenderer(GameRenderer*, World*, unsigned char, const char*, unsigned int, unsigned int);
 void CleanupRendering(GameRenderer*);
+
+void DrawGame(GameRenderer*, World*);
 void DrawBackgroundGrid(SDL_Renderer*, unsigned int, unsigned int, DrawableGrid*);
 
+void MoveCamera(GameRenderer*, int, int);
+void ZoomIn(GameRenderer*);
+void ZoomOut(GameRenderer*);
+
+//void ScreenToWorldCoord(GameRenderer*, int, int);
 #endif

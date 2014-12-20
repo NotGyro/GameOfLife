@@ -7,19 +7,11 @@
 int main()
 {
 	World ourWorld;
-	InitializeWorld(&ourWorld, 256, 256);
+	InitializeWorld(&ourWorld, 64, 64);
 
-	DrawableGrid bgGrid;
-	bgGrid.color.a = 255;
-	//Sky blue
-	bgGrid.color.r = 120;
-	bgGrid.color.g = 190;
-	bgGrid.color.b = 255;
-	bgGrid.cellSize = 16;
 
 	GameRenderer ren;
-	ren.gridProps = &bgGrid;
-	InitGameRenderer(&ren, "Conway's Game of Life", 640, 480);	
+	InitGameRenderer(&ren, &ourWorld, 16, "Conway's Game of Life", 640, 480);	
 	//Mainloop here.
 	bool quit = false;
 	bool paused = true;
@@ -37,6 +29,7 @@ int main()
 	SetCell(&ourWorld, 9, 6, true);
 	SetCell(&ourWorld, 8, 6, true);
 	FlipBuffers(&ourWorld);
+	bool dragMode = false;
 	while(!quit)
 	{
 		//World logic
@@ -52,6 +45,38 @@ int main()
 			if(event.type == SDL_QUIT)
 			{
 				quit = true;
+			}
+			else if( event.type == SDL_MOUSEWHEEL )
+			{
+				if(event.wheel.y > 0)
+				{
+					ZoomIn(&ren);
+				}
+				else if(event.wheel.y < 0)
+				{
+					ZoomOut(&ren);
+				}
+			}
+			else if( event.type == SDL_MOUSEMOTION )
+			{
+				if(dragMode == true)
+				{
+					MoveCamera(&ren, event.motion.xrel, event.motion.yrel);	
+				}
+			}
+			else if( event.type == SDL_MOUSEBUTTONDOWN)
+			{
+				if(event.button.button == SDL_BUTTON_RIGHT)
+				{
+					dragMode = true;
+				}
+			}
+			else if( event.type == SDL_MOUSEBUTTONUP)
+			{
+				if(event.button.button == SDL_BUTTON_RIGHT)
+				{
+					dragMode = false;
+				}
 			}
 			else if( event.type == SDL_KEYDOWN ) 
 			{

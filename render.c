@@ -1,17 +1,25 @@
 #include "render.h"
 #include <stdio.h>
 
-void InitGameRenderer(GameRenderer* g, const char* wtitle, unsigned int wwidth, unsigned int wheight)
+#define MAX_ZOOM_IN 6
+#define MAX_ZOOM_OUT 10
+
+void InitGameRenderer(GameRenderer* g, World* world, unsigned char cellSize, const char* wtitle, unsigned int wwidth, unsigned int wheight)
 {
-		
+	//Set up the look n' feel of the game area.
+	
+	g->gridProps.color.a = 255;
+	//Sky blue
+	g->gridProps.color.r = 120;
+	g->gridProps.color.g = 190;
+	g->gridProps.color.b = 255;
+	g->gridProps.cellSize = cellSize;
+	
 	//Our window 
 	g->window = NULL; 
 
 	g->windowWidth = wwidth;
 	g->windowHeight = wheight;
-
-	g->gameWidth = wwidth;
-	g->gameHeight = wheight;	
 
 	g->zoom = 0;
 	//Initialize SDL
@@ -24,7 +32,7 @@ void InitGameRenderer(GameRenderer* g, const char* wtitle, unsigned int wwidth, 
 
 	 //Create the window 
 	g->window = SDL_CreateWindow( wtitle, SDL_WINDOWPOS_CENTERED, 
-		SDL_WINDOWPOS_CENTERED, wwidth, wheight, SDL_WINDOW_SHOWN );
+		SDL_WINDOWPOS_CENTERED, wwidth, wheight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE );
 	if( g->window == NULL ) 
 	{ 
 		printf( "Window wasn't initialized, SDL_GetError() says: %s\n", 
@@ -44,7 +52,12 @@ void InitGameRenderer(GameRenderer* g, const char* wtitle, unsigned int wwidth, 
 	//We will need a function for updating game area size,
 	//called on world resize, that reallocates this.
 	g->gameTexture = SDL_CreateTexture(g->renderer, SDL_PIXELFORMAT_RGBA8888,
-		SDL_TEXTUREACCESS_TARGET, wwidth, wheight);
+		SDL_TEXTUREACCESS_TARGET, world->width*cellSize, world->height*cellSize);
+
+	g->screenGame.x = 0;
+	g->screenGame.y = 0;
+	g->screenGame.w = world->width*cellSize;
+	g->screenGame.h = world->height*cellSize;
 }
 
 
@@ -59,8 +72,8 @@ void DrawGame(GameRenderer* g, World* world)
 	SDL_RenderClear( g->renderer );
 	
 	//Draw our grid
-	DrawBackgroundGrid( g->renderer, g->gameWidth, g->gameHeight, g->gridProps );		
-	DrawCells(g->renderer, g->gridProps, world);		
+	DrawBackgroundGrid( g->renderer, g->screenGame.w, g->screenGame.h, &g->gridProps );		
+	DrawCells(g->renderer, &g->gridProps, world);		
 	SDL_RenderPresent( g->renderer );
 
 	//Now draw the rest of the screen
@@ -68,13 +81,7 @@ void DrawGame(GameRenderer* g, World* world)
 	SDL_SetRenderDrawColor( g->renderer, 180, 180, 180, 255 );
 	SDL_RenderClear( g->renderer );
 
-	//Dumb rectangle for testing
-	SDL_Rect stretchRect; 
-	stretchRect.x = 0; 
-	stretchRect.y = 0; 
-	stretchRect.w = 256; 
-	stretchRect.h = 256; 
-	SDL_RenderCopy(g->renderer, g->gameTexture, NULL, &stretchRect);
+	SDL_RenderCopy(g->renderer, g->gameTexture, NULL, &(g->screenGame));
 	SDL_RenderPresent(g->renderer);
 }
 
@@ -114,6 +121,34 @@ void DrawBackgroundGrid(SDL_Renderer* renderer, unsigned int width, unsigned int
 	for(int y = 0; y < height; y += grid->cellSize)
 	{
 		SDL_RenderDrawLine( renderer, 0, y, width, y);
+	}
+}
+
+void MoveCamera(GameRenderer* g, int x, int y)
+{
+	g->screenGame.x += x;
+	g->screenGame.y += y;
+}
+void ZoomIn(GameRenderer* g)
+{
+	if(g->zoom < MAX_ZOOM_IN)
+	{
+		g->screenGame.x *= 2;
+		g->screenGame.y *= 2;
+		g->screenGame.w *= 2;
+		g->screenGame.h *= 2;
+		++(g->zoom);
+	}
+}
+void ZoomOut(GameRenderer* g)
+{
+	if(g->zoom > (- 8))
+	{
+		g->screenGame.x /= 2;
+		g->screenGame.y /= 2;
+		g->screenGame.w /= 2;
+		g->screenGame.h /= 2;
+		--(g->zoom);
 	}
 }
 void CleanupRendering(GameRenderer* g)
