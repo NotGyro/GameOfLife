@@ -12,8 +12,8 @@ void SetCell(World *const w, int cellX, int cellY, bool setTo)
 	{ 
  		buf = w->blueBuffer;
 	}
-	if(((cellX > 0) && (cellX < w->width))
-			&& ((cellY > 0) && (cellY < w->height)))
+	if(((cellX >= 0) && (cellX < w->width))
+			&& ((cellY >= 0) && (cellY < w->height)))
 	{
 		//Packed array element retrieval.
 		buf[(cellY*w->height)+cellX] = setTo;
