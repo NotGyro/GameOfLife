@@ -53,5 +53,5 @@ void MoveCamera(GameRenderer*, int, int);
 void ZoomIn(GameRenderer*);
 void ZoomOut(GameRenderer*);
 
-//void ScreenToWorldCoord(GameRenderer*, int, int);
+WorldCoord ScreenToWorldCoord(GameRenderer*, int, int);
 #endif

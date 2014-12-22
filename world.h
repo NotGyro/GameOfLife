@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 typedef struct World World;
+typedef struct WorldCoord WorldCoord;
 
 //A datatype to tell us things like "which buffer are
 //we currently writing to?" 
@@ -41,6 +42,10 @@ struct World
 	bool* blueBuffer;
 };
 
+struct WorldCoord
+{
+	int x, y;
+};
 void Update(World *const);
 
 void FlipBuffers(World *const);

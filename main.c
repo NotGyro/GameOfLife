@@ -30,6 +30,9 @@ int main()
 	SetCell(&ourWorld, 8, 6, true);
 	FlipBuffers(&ourWorld);
 	bool dragMode = false;
+	bool displayNew = false;
+	int mousex = 0;
+	int mousey = 0;
 	while(!quit)
 	{
 		//World logic
@@ -37,6 +40,9 @@ int main()
 		{
 			Update(&ourWorld);
 			++generation;
+			
+			//TODO: Sane frame limiting / speed control rather than this silliness.
+			SDL_Delay(100);	
 		}	
 		//Input
 		while( SDL_PollEvent(&event) != 0)
@@ -63,8 +69,12 @@ int main()
 				{
 					MoveCamera(&ren, event.motion.xrel, event.motion.yrel);	
 				}
+				mousex = event.motion.x;
+				mousey = event.motion.y;
+
+				
 			}
-			else if( event.type == SDL_MOUSEBUTTONDOWN)
+			else if( event.type == SDL_MOUSEBUTTONDOWN )
 			{
 				if(event.button.button == SDL_BUTTON_RIGHT)
 				{
@@ -76,6 +86,14 @@ int main()
 				if(event.button.button == SDL_BUTTON_RIGHT)
 				{
 					dragMode = false;
+				}
+				
+				else if (event.button.button == SDL_BUTTON_LEFT)
+				{
+					WorldCoord wc = 
+					ScreenToWorldCoord(&ren, mousex, mousey);	
+					FlipCell(&ourWorld, wc.x, wc.y);
+					displayNew = true;
 				}
 			}
 			else if( event.type == SDL_KEYDOWN ) 
@@ -100,6 +118,12 @@ int main()
 				} 
 			}	
 		}
+		//Flip the buffers so you can see any cells you've clicked in
+		if(displayNew)
+		{
+			FlipBuffers(&ourWorld);
+			displayNew = false;	
+		}		
 		//Rendering happens here:
 		DrawGame(&ren, &ourWorld);		
 	}

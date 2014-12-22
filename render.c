@@ -1,5 +1,7 @@
 #include "render.h"
+
 #include <stdio.h>
+#include <math.h>
 
 #define MAX_ZOOM_IN 6
 #define MAX_ZOOM_OUT 10
@@ -151,6 +153,26 @@ void ZoomOut(GameRenderer* g)
 		--(g->zoom);
 	}
 }
+
+WorldCoord ScreenToWorldCoord(GameRenderer* g, int x, int y)
+{
+	WorldCoord ret;
+	ret.x = x;
+	ret.y = y;
+	//Apply offset
+	ret.x -= g->screenGame.x;
+	ret.y -= g->screenGame.y;
+	//Scale for zoom
+	float zoomScale = pow(2.0f, -g->zoom);
+	ret.x = (int) (((float)ret.x) * zoomScale);
+	ret.y = (int) (((float)ret.y) * zoomScale);
+	//Scale our pixel coordinates into world grid coordinates
+	ret.x /= g->gridProps.cellSize;
+	ret.y /= g->gridProps.cellSize;
+
+	return ret;
+}
+
 void CleanupRendering(GameRenderer* g)
 {
 	SDL_DestroyTexture(g->gameTexture);

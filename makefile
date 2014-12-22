@@ -1,7 +1,7 @@
 EXTRA_CFLAGS := -std=c99
 
 C_FLAGS = -std=c99 -w -g 
-C_FLAGS_LINK = -lSDL2
+C_FLAGS_LINK = -lSDL2 -lm
 
 all: game 
 
