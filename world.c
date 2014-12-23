@@ -1,7 +1,7 @@
 #include "world.h"
 #include "null.h"
 
-void SetCell(World *const w, int cellX, int cellY, bool setTo)
+void SetCellUnwrapped(World *const w, int cellX, int cellY, bool setTo)
 {
 	bool* buf;
 	if(w->writeBuf == RED)
@@ -20,33 +20,68 @@ void SetCell(World *const w, int cellX, int cellY, bool setTo)
 	}
 
 }
-void _UpdateCell(World *const w, unsigned int cellX, unsigned int cellY)
+int WrapX(World *const w, int cellX)
+{
+	/*Coordinate shift for world wrapping functionality.*/
+	if(cellX < 0)
+	{
+		//Go over left border
+		cellX = w->width + cellX;
+	}
+	else if(cellX >= w->width)
+	{
+		//Go over right border
+		cellX = cellX - w->width;
+	}
+	return cellX;
+}
+
+int WrapY(World *const w, int cellY)
+{
+	if(cellY < 0)
+	{
+		//Go over top border.
+		cellY = w->height + cellY;
+	}
+	else if(cellY >= w->height)
+	{
+		//Go over right border
+		cellY = cellY - w->height;
+	}
+	return cellY;
+};
+void SetCell(World *const w, int cellX, int cellY, bool setTo)
+{
+	SetCellUnwrapped(w, WrapX(w, cellX), WrapY(w, cellY), setTo);
+}
+void UpdateCell(World *const w, unsigned int cellX, unsigned int cellY)
 {
 	
 	unsigned char count = 0;
 	//Set up the bounds for our search, ensuring that they are
 	//within the array.
-	unsigned int fromX = cellX - 1;
-	if(fromX < 0) {
-		fromX = 0;
-	}
-	unsigned int toX = cellX + 1;
-	if(toX >= w->width) {
-		toX = w->width-1;
-	}
-	unsigned int fromY = cellY - 1;
-	if(fromY < 0) {
-		fromY = 0;
-	}
-	unsigned int toY = cellY + 1;
-	if(toY >= w->height) {
-		toY = w->height-1;
-	}
+	int fromX = cellX - 1;
+	//Commented-out functionality is pre world-wrapping
+	//if(fromX < 0) {
+	//	fromX = 0;
+	//}
+	int toX = cellX + 1;
+	//if(toX >= w->width) {
+	//	toX = w->width-1;
+	//}
+	int fromY = cellY - 1;
+	//if(fromY < 0) {
+	//	fromY = 0;
+	//}
+	int toY = cellY + 1;
+	//if(toY >= w->height) {
+	//	toY = w->height-1;
+	//}
 	bool ourCell = false; //TODO: Should it default false?
 	//Search for adjacent tiles.
-	for(unsigned int itY = fromY; itY <= toY; ++itY)
+	for(int itY = fromY; itY <= toY; ++itY)
 	{
-		for(unsigned int itX = fromX; itX <= toX; ++itX)
+		for(int itX = fromX; itX <= toX; ++itX)
 		{
 			//Is this just our cell?
 			if((itX == cellX) && (itY == cellY))
@@ -99,7 +134,7 @@ void Update(World *const w)
 	{
 		for(int x = 0; x < w->width; ++x)
 		{
-			_UpdateCell(w, x, y);
+			UpdateCell(w, x, y);
 		}
 	}
 	FlipBuffers(w);	
@@ -153,8 +188,17 @@ bool GetCellFromBuffer(bool* buf, unsigned int width, unsigned int height,
  * Wraps/hides buffering and such.
  * Gets from the non-writing buffer.
  * */
-bool GetCell(World *const w, int x, int y)
+bool GetCellUnwrapped(World *const w, int x, int y)
 {
+	//Bounds checking
+	if((x < 0) || (x >= w->width))
+	{
+		return -1;
+	}
+	if((y < 0) || (y >= w->height))
+	{
+		return -1;
+	}
 	if(w->writeBuf == RED)
 	{
 		return GetCellFromBuffer(w->blueBuffer, 
@@ -169,6 +213,11 @@ bool GetCell(World *const w, int x, int y)
 	{
 		return -1;
 	}
+};
+
+bool GetCell(World *const w, int x, int y)
+{
+	return GetCellUnwrapped(w, WrapX(w, x), WrapY(w, y));
 }
 
 void DestroyWorld(World *const w)
