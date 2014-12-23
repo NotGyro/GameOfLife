@@ -56,6 +56,7 @@ void FlipBuffers(World *const);
  */
 void ResizeWorld(World *const, unsigned int, unsigned int, int, int);
 
+void SetCell(World *const, int, int, bool);
 void FlipCell(World *const, int, int);
 
 void InitializeWorld(World *const, unsigned int, unsigned int);

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <SDL2/SDL.h>
 
 #include "world.h"
@@ -33,16 +34,22 @@ int main()
 	bool displayNew = false;
 	int mousex = 0;
 	int mousey = 0;
+	
+	uint32_t lastUpdate = 0;	
+	uint32_t tickDelay = 80;
 	while(!quit)
 	{
 		//World logic
 		if(!paused)
 		{
-			Update(&ourWorld);
-			++generation;
-			
-			//TODO: Sane frame limiting / speed control rather than this silliness.
-			SDL_Delay(100);	
+			uint32_t currentTime = SDL_GetTicks();
+			if((currentTime -lastUpdate) >= tickDelay)
+			{ 
+				Update(&ourWorld);
+				++generation;
+				
+				lastUpdate = currentTime;
+			}
 		}	
 		//Input
 		while( SDL_PollEvent(&event) != 0)
@@ -69,33 +76,25 @@ int main()
 				{
 					MoveCamera(&ren, event.motion.xrel, event.motion.yrel);	
 				}
+
 				mousex = event.motion.x;
 				mousey = event.motion.y;
-
 				
 			}
 			else if( event.type == SDL_MOUSEBUTTONDOWN )
 			{
-				if(event.button.button == SDL_BUTTON_RIGHT)
+				if(event.button.button == SDL_BUTTON_MIDDLE)
 				{
 					dragMode = true;
 				}
 			}
 			else if( event.type == SDL_MOUSEBUTTONUP)
 			{
-				if(event.button.button == SDL_BUTTON_RIGHT)
+				if(event.button.button == SDL_BUTTON_MIDDLE)
 				{
 					dragMode = false;
 				}
-				
-				else if (event.button.button == SDL_BUTTON_LEFT)
-				{
-					WorldCoord wc = 
-					ScreenToWorldCoord(&ren, mousex, mousey);	
-					FlipCell(&ourWorld, wc.x, wc.y);
-					displayNew = true;
-				}
-			}
+			}	
 			else if( event.type == SDL_KEYDOWN ) 
 			{
 				switch( event.key.keysym.sym ) 
@@ -112,11 +111,44 @@ int main()
 					Update(&ourWorld);
 					++generation;
 					break;
+					
+					//Slow down
+					case SDLK_PAGEDOWN:
+					if(tickDelay < 1000)
+					{
+						tickDelay += 20;
+					}
+					break;
+					
+					//Speed up
+					case SDLK_PAGEUP:
+					if(tickDelay > 10)
+					{
+						tickDelay -= 10;
+					}
+					break;
 
 					default: 
 					break; 
 				} 
 			}	
+		}
+
+		if (SDL_GetMouseState(NULL, NULL) 
+			& SDL_BUTTON(SDL_BUTTON_LEFT))
+		{
+			WorldCoord wc = 
+			ScreenToWorldCoord(&ren, mousex, mousey);	
+			SetCell(&ourWorld, wc.x, wc.y, true);
+			displayNew = true;
+		}
+		else if (SDL_GetMouseState(NULL, NULL) 
+			& SDL_BUTTON(SDL_BUTTON_RIGHT))
+		{
+			WorldCoord wc = 
+			ScreenToWorldCoord(&ren, mousex, mousey);	
+			SetCell(&ourWorld, wc.x, wc.y, false);
+			displayNew = true;
 		}
 		//Flip the buffers so you can see any cells you've clicked in
 		if(displayNew)
