@@ -84,6 +84,28 @@ void DrawGame(GameRenderer* g, World* world)
 	SDL_RenderClear( g->renderer );
 
 	SDL_RenderCopy(g->renderer, g->gameTexture, NULL, &(g->screenGame));
+	//Draw the ring of greyed-out game areas around our game area, to represent world wrapping to the user.
+	SDL_SetTextureColorMod(g->gameTexture, 240, 240, 240);
+	int startX = g->screenGame.x - g->screenGame.w;
+	int startY = g->screenGame.y - g->screenGame.h;
+	SDL_Rect current;
+	current.w = g->screenGame.w;
+	current.h = g->screenGame.h;
+	for(int iterX = 0; iterX < 3; ++iterX)
+	{
+		for(int iterY = 0; iterY < 3; ++iterY)
+		{
+			//Don't draw over primary game area.
+			if( ! ((iterX == 1) && (iterY == 1)))
+			{
+				current.x = startX + (current.w	* iterX);
+				current.y = startY + (current.h	* iterY);
+				SDL_RenderCopy(g->renderer, g->gameTexture, NULL, &current);
+			}
+		}
+	}
+
+	SDL_SetTextureColorMod(g->gameTexture, 255, 255, 255);
 	SDL_RenderPresent(g->renderer);
 }
 

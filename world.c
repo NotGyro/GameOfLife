@@ -83,7 +83,7 @@ void UpdateCell(World *const w, unsigned int cellX, unsigned int cellY)
 	{
 		for(int itX = fromX; itX <= toX; ++itX)
 		{
-			//Is this just our cell?
+		//Is this just our cell?
 			if((itX == cellX) && (itY == cellY))
 			{
 				ourCell = GetCell(w, itX, itY);	
