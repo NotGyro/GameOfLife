@@ -40,7 +40,9 @@ struct GameRenderer
 	SDL_Rect screenGame;  
 
 	SDL_Texture* gameTexture;
-	
+
+	//Tracks the variable of the same name in the world struct.
+	unsigned int resizeRevision;	
 };
 
 void InitGameRenderer(GameRenderer*, World*, unsigned char, const char*, unsigned int, unsigned int);

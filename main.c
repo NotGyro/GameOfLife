@@ -37,6 +37,9 @@ int main()
 	
 	uint32_t lastUpdate = 0;	
 	uint32_t tickDelay = 80;
+	
+	ResizeWorld(&ourWorld, 128, 128, 32, 32); 	
+
 	while(!quit)
 	{
 		//World logic

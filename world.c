@@ -148,7 +148,36 @@ void Update(World *const w)
 void ResizeWorld(World *const w, unsigned int width, unsigned int height,
 	       	int offX, int offY)
 {
+	bool* newBlue = calloc(width*height, sizeof(bool));
+	bool* newRed = calloc(width*height, sizeof(bool));
+	
+	//Iterate over every element in the old world
+	for(int x = 0; x < w->width; ++x)
+	{
+		for(int y = 0; y < w->width; ++y)
+		{
+			//Copy over the old world to the new
+			if((((x + offX) < width) && ((x + offX) >= 0))
+			&& (((y + offY) < height) && ((y+offY) >=0)))
+			{
+				newBlue[((y+offY)*height)+(x+offX)] = 
+					w->blueBuffer[(y * (w->height))+x];
+				
+				newRed[((y+offY)*height)+(x+offX)] = 
+					w->redBuffer[(y * (w->height))+x];
+			}
+		}
+	}
+	//Set up the world's properties, free old buffers.
 
+	free(w->redBuffer);
+	free(w->blueBuffer);
+	w->redBuffer = newRed;
+	w->blueBuffer = newBlue;
+
+	w->width = width;
+	w->height = height;
+	++(w->resizeRevision);
 }
 void FlipCell(World *const w, int cellX, int cellY)
 {
@@ -162,6 +191,8 @@ void InitializeWorld(World *const w, unsigned int width, unsigned int height)
 	w->blueBuffer = calloc(width*height, sizeof(bool));
 	w->width = width;
 	w->height = height;
+	
+	w->resizeRevision = 0;
 }
 
 //Basically a convenience function over InitializeWorld.

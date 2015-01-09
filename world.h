@@ -40,6 +40,10 @@ struct World
 
 	bool* redBuffer;
 	bool* blueBuffer;
+
+	/*Incremented every time the world is resized,
+	used to inform the renderer that this has happened.*/
+	int resizeRevision;
 };
 
 struct WorldCoord

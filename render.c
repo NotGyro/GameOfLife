@@ -60,12 +60,14 @@ void InitGameRenderer(GameRenderer* g, World* world, unsigned char cellSize, con
 	g->screenGame.y = 0;
 	g->screenGame.w = world->width*cellSize;
 	g->screenGame.h = world->height*cellSize;
+	
+	g->resizeRevision = world->resizeRevision;
 }
 
 
 void DrawGame(GameRenderer* g, World* world)
 {
-
+	CheckResize(g, world);
 	//Prepare to render to texture.
 	SDL_SetRenderTarget(g->renderer, g->gameTexture);
 	
@@ -194,6 +196,29 @@ WorldCoord ScreenToWorldCoord(GameRenderer* g, int x, int y)
 
 	return ret;
 }
+
+void CheckResize(GameRenderer* g, World* w)
+{
+	if(g->resizeRevision != w->resizeRevision)
+	{
+		ResizeRenderer(g, w->width, w->height);	
+		g->resizeRevision = w->resizeRevision;
+	}
+};
+
+void ResizeRenderer(GameRenderer* g, unsigned int width, unsigned int height)
+{
+	SDL_DestroyTexture(g->gameTexture);
+	
+	g->gameTexture = SDL_CreateTexture(g->renderer, SDL_PIXELFORMAT_RGBA8888,
+		SDL_TEXTUREACCESS_TARGET, width*g->gridProps.cellSize, height*g->gridProps.cellSize);
+	
+
+	float zoomScale = pow(2.0f, -g->zoom);
+	//Resize the screenGame rect, accounting for zoom level.
+	g->screenGame.w = (int)(((float)width * (float)g->gridProps.cellSize) * zoomScale);
+	g->screenGame.h = (int)(((float)height * (float)g->gridProps.cellSize) * zoomScale);
+};
 
 void CleanupRendering(GameRenderer* g)
 {
