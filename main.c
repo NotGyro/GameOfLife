@@ -40,6 +40,8 @@ int main()
 	
 	ResizeWorld(&ourWorld, 128, 128, 32, 32); 	
 
+	bool ctrlHeld = false;
+	int resizeAmount = 1;	
 	while(!quit)
 	{
 		//World logic
@@ -114,6 +116,28 @@ int main()
 					Update(&ourWorld);
 					++generation;
 					break;
+
+					case SDLK_LCTRL:
+					ctrlHeld = true;
+					resizeAmount = -1;
+					break;
+	
+					//World resizing	
+					case SDLK_RIGHT:
+					ResizeWorld(&ourWorld, ourWorld.width+resizeAmount, ourWorld.height, 0, 0);
+					break;	
+					
+					case SDLK_DOWN:
+					ResizeWorld(&ourWorld, ourWorld.width, ourWorld.height+resizeAmount, 0, 0);
+					break;	
+					
+					case SDLK_LEFT:
+					ResizeWorld(&ourWorld, ourWorld.width+resizeAmount, ourWorld.height, 1, 0);
+					break;	
+					
+					case SDLK_UP:
+					ResizeWorld(&ourWorld, ourWorld.width, ourWorld.height+resizeAmount, 0, 1);
+					break;	
 					
 					//Slow down
 					case SDLK_PAGEDOWN:
@@ -135,6 +159,18 @@ int main()
 					break; 
 				} 
 			}	
+			else if( event.type == SDL_KEYUP ) 
+			{
+				switch( event.key.keysym.sym ) 
+				{ 
+					case SDLK_LCTRL:
+					ctrlHeld = false;
+					resizeAmount = 1;
+					break;
+					default:
+					break;
+				}
+			} 
 		}
 
 		if (SDL_GetMouseState(NULL, NULL) 

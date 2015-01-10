@@ -214,7 +214,7 @@ void ResizeRenderer(GameRenderer* g, unsigned int width, unsigned int height)
 		SDL_TEXTUREACCESS_TARGET, width*g->gridProps.cellSize, height*g->gridProps.cellSize);
 	
 
-	float zoomScale = pow(2.0f, -g->zoom);
+	float zoomScale = pow(2.0f, g->zoom);
 	//Resize the screenGame rect, accounting for zoom level.
 	g->screenGame.w = (int)(((float)width * (float)g->gridProps.cellSize) * zoomScale);
 	g->screenGame.h = (int)(((float)height * (float)g->gridProps.cellSize) * zoomScale);

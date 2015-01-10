@@ -16,7 +16,7 @@ void SetCellUnwrapped(World *const w, int cellX, int cellY, bool setTo)
 			&& ((cellY >= 0) && (cellY < w->height)))
 	{
 		//Packed array element retrieval.
-		buf[(cellY*w->height)+cellX] = setTo;
+		buf[(cellY*w->width)+cellX] = setTo;
 	}
 
 }
@@ -146,25 +146,30 @@ void Update(World *const w)
  * onto the new one.
  */
 void ResizeWorld(World *const w, unsigned int width, unsigned int height,
-	       	int offX, int offY)
+			int offX, int offY)
 {
-	bool* newBlue = calloc(width*height, sizeof(bool));
-	bool* newRed = calloc(width*height, sizeof(bool));
-	
+	bool* newBlue = calloc( width * height, sizeof(bool) );
+	bool* newRed = calloc( width * height, sizeof(bool) );
+	if((newBlue != 0) && (newRed != 0))
+	{	
 	//Iterate over every element in the old world
 	for(int x = 0; x < w->width; ++x)
 	{
-		for(int y = 0; y < w->width; ++y)
+		for(int y = 0; y < w->height; ++y)
 		{
+			int insertX = x + offX;
+			int insertY = y + offY;
 			//Copy over the old world to the new
-			if((((x + offX) < width) && ((x + offX) >= 0))
-			&& (((y + offY) < height) && ((y+offY) >=0)))
+			if(((insertX < width) && (insertX >= 0))
+			&& ((insertY < height) && (insertY >= 0 )))
 			{
-				newBlue[((y+offY)*height)+(x+offX)] = 
-					w->blueBuffer[(y * (w->height))+x];
+				//printf("X: %d \n", insertX);
+				//printf("Y: %d \n", insertY);
+				newBlue[(insertY*width)+insertX] = 
+					w->blueBuffer[(y * (w->width))+x];
 				
-				newRed[((y+offY)*height)+(x+offX)] = 
-					w->redBuffer[(y * (w->height))+x];
+				newRed[(insertY*width)+insertX] = 
+					w->redBuffer[(y * (w->width))+x];
 			}
 		}
 	}
@@ -178,6 +183,7 @@ void ResizeWorld(World *const w, unsigned int width, unsigned int height,
 	w->width = width;
 	w->height = height;
 	++(w->resizeRevision);
+	}
 }
 void FlipCell(World *const w, int cellX, int cellY)
 {
@@ -211,7 +217,7 @@ bool GetCellFromBuffer(bool* buf, unsigned int width, unsigned int height,
 			&& ((posY >= 0) && (posY < height)))
 	{
 		//Packed array element retrieval.
-		return buf[(posY*height)+posX];
+		return buf[(posY*width)+posX];
 	}
 	return -1;
 };
