@@ -132,11 +132,11 @@ int main()
 					break;	
 					
 					case SDLK_LEFT:
-					ResizeWorld(&ourWorld, ourWorld.width+resizeAmount, ourWorld.height, 1, 0);
+					ResizeWorld(&ourWorld, ourWorld.width+resizeAmount, ourWorld.height, resizeAmount, 0);
 					break;	
 					
 					case SDLK_UP:
-					ResizeWorld(&ourWorld, ourWorld.width, ourWorld.height+resizeAmount, 0, 1);
+					ResizeWorld(&ourWorld, ourWorld.width, ourWorld.height+resizeAmount, 0, resizeAmount);
 					break;	
 					
 					//Slow down

@@ -76,7 +76,11 @@ void DrawGame(GameRenderer* g, World* world)
 	SDL_RenderClear( g->renderer );
 	
 	//Draw our grid
-	DrawBackgroundGrid( g->renderer, g->screenGame.w, g->screenGame.h, &g->gridProps );		
+	//Resizing the background grid looks terrible.
+	if(g->zoom >= 0)
+	{
+		DrawBackgroundGrid( g->renderer, g->screenGame.w, g->screenGame.h, &g->gridProps );		
+	}
 	DrawCells(g->renderer, &g->gridProps, world);		
 	SDL_RenderPresent( g->renderer );
 
