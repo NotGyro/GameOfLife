@@ -6,6 +6,10 @@
 #define MAX_ZOOM_IN 6
 #define MAX_ZOOM_OUT 10
 
+void DrawCells(SDL_Renderer* render, DrawableGrid* grid, World* w);
+void CheckResize(GameRenderer* g, World* w);
+void ResizeRenderer(GameRenderer* g, unsigned int width, unsigned int height);
+
 void InitGameRenderer(GameRenderer* g, World* world, unsigned char cellSize, const char* wtitle, unsigned int wwidth, unsigned int wheight)
 {
 	//Set up the look n' feel of the game area.
@@ -28,7 +32,7 @@ void InitGameRenderer(GameRenderer* g, World* world, unsigned char cellSize, con
 	if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
 		printf( "SDL did not initialize, SDL_GetError() says: %s\n", SDL_GetError() ); 
-		return 1;
+		exit(1);
 	}
 
 
@@ -39,7 +43,7 @@ void InitGameRenderer(GameRenderer* g, World* world, unsigned char cellSize, con
 	{ 
 		printf( "Window wasn't initialized, SDL_GetError() says: %s\n", 
 			SDL_GetError() ); 
-		return 1;
+		exit(1);
 	}
  
 	g->renderer = 0;
@@ -48,7 +52,7 @@ void InitGameRenderer(GameRenderer* g, World* world, unsigned char cellSize, con
 	{
 		printf( "Renderer didn't initialize properly, SDL_GetError() says: %s\n", SDL_GetError() );
 
-		return 1;
+		exit(1);
 	}
 
 	//We will need a function for updating game area size,
